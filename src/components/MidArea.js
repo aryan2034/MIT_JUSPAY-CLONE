@@ -3,205 +3,152 @@ import { connect } from "react-redux";
 import { addList } from "../redux/midarea/actions";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { getComponent } from "./getComponents";
-import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import { purple } from "@material-ui/core/colors";
-import Paper from "@material-ui/core/Paper";
 
-// Styling for MaterialUI Components
-const useStyles = makeStyles(() =>
-  createStyles({
-    button: {
-      margin: 0,
-    },
-  })
+const CodeBlock = ({ children, provided }) => (
+  <li
+    ref={provided.innerRef}
+    {...provided.draggableProps}
+    {...provided.dragHandleProps}
+    className="mb-2 transform transition-all duration-300 hover:scale-105"
+  >
+    {children}
+  </li>
 );
 
-// Customized button for Running Lists
-const RunButton = withStyles((theme) => ({
-  root: {
-    color: theme.palette.getContrastText(purple[500]),
-    backgroundColor: purple[500],
-    fontSize: "13px",
-    "&:hover": {
-      backgroundColor: purple[700],
-    },
-  },
-}))(Button);
+const RunButton = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-all duration-300 transform hover:scale-105 active:scale-95"
+  >
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+    </svg>
+    Run
+  </button>
+);
 
-// Mid Area Component
-function MidArea({ area_list, add_list, event_values }) {
-  const classes = useStyles();
-  const eventFire = (el, etype) => {
-    if (el && el.fireEvent) {
-      el.fireEvent("on" + etype);
-    } else if (el) {
-      var evObj = document.createEvent("Events");
-      evObj.initEvent(etype, true, false);
-      el.dispatchEvent(evObj);
-    }
-  };
+const CodeArea = ({ list, onRun }) => (
+  <div className="w-60 animate-fadeIn">
+    <div className="bg-white rounded-lg shadow-lg p-4">
+      <div className="w-52 border border-gray-200 rounded-md p-2 bg-gray-50">
+        <Droppable droppableId={list.id} type="COMPONENTS">
+          {(provided) => (
+            <ul
+              className={`${list.id} w-48 h-full`}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              <div className="text-center mx-auto my-2 mb-4">
+                <RunButton onClick={() => onRun(list.comps, list.id)} />
+              </div>
 
-  // Handle Running the list
-  const handleClick = (arr, id) => {
-    if (arr.length === 0) return;
-    let i = 0;
-
-    let repeat = 1;
-
-    let str1 = `comp${arr[i]}-${id}-${i}`;
-
-    // Handle Wait at first index
-    if (arr[i] === "WAIT") {
-      let str2 = `comp${arr[i]}-${id}-${i}`;
-      let last_time = new Date().getTime();
-      let curr_time = new Date().getTime();
-
-      while ((curr_time - last_time) / 1000 < event_values.wait[str2] - 2) {
-        curr_time = new Date().getTime();
-      }
-    }
-
-    // Handle Repeat at first index
-    else if (arr[i] !== "REPEAT") {
-      eventFire(document.getElementById(str1), "click");
-    } else {
-      repeat = event_values.repeat[str1] + 1;
-    }
-    i++;
-
-    /* Each function execution takes 2 seconds */
-    var cnt = setInterval(() => {
-      if (i === arr.length) {
-        clearInterval(cnt);
-      }
-
-      // Handle Wait
-      if (arr[i] === "WAIT") {
-        let str2 = `comp${arr[i]}-${id}-${i}`;
-        let last_time = new Date().getTime();
-        let curr_time = new Date().getTime();
-
-        while ((curr_time - last_time) / 1000 < event_values.wait[str2] - 2) {
-          curr_time = new Date().getTime();
-        }
-        i++;
-      }
-      // Handle Repeat Component at current index
-      else if (arr[i] === "REPEAT") {
-        let str2 = `comp${arr[i]}-${id}-${i}`;
-        repeat = repeat * (event_values.repeat[str2] + 1);
-        i++;
-      }
-      // If Repeat component is at previous index
-      else if (arr[i - 1] === "REPEAT" && repeat > 2) {
-        let str2 = `comp${arr[i]}-${id}-${i}`;
-        eventFire(document.getElementById(str2), "click");
-        repeat--;
-      } else {
-        let str2 = `comp${arr[i]}-${id}-${i}`;
-        eventFire(document.getElementById(str2), "click");
-        i++;
-      }
-    }, 2000);
-  };
-  return (
-    <div className="flex-1 h-full overflow-auto p-3">
-      <div className="flex justify-between">
-        <div className="font-bold mb-5 text-center border border-2 rounded text-white bg-green-400 p-2 w-auto">
-          Mid Area
-        </div>
-
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            startIcon={<AddIcon />}
-            onClick={() => add_list()}
-          >
-            Add List{" "}
-          </Button>
-        </div>
+              {list.comps?.map((component, index) => {
+                const componentId = `comp${component}-${list.id}-${index}`;
+                return (
+                  <Draggable
+                    key={`${component}-${list.id}-${index}`}
+                    draggableId={`${component}-${list.id}-${index}`}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <CodeBlock provided={provided}>
+                        {getComponent(component, componentId)}
+                      </CodeBlock>
+                    )}
+                  </Draggable>
+                );
+              })}
+              {provided.placeholder}
+            </ul>
+          )}
+        </Droppable>
       </div>
-      <div className="grid grid-flow-col">
-        {area_list.midAreaLists.map((l) => {
-          return (
-            <div className="w-60" key={l.id}>
-              <Paper elevation={3} className="p-4">
-                <div className="w-52 border border-2 border-gray-300 p-2">
-                  <Droppable droppableId={l.id} type="COMPONENTS">
-                    {(provided) => {
-                      return (
-                        <ul
-                          className={`${l.id} w-48 h-full`}
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                        >
-                          <div className="text-center mx-auto my-2 mb-4">
-                            <RunButton
-                              variant="contained"
-                              className={classes.button}
-                              startIcon={<PlayArrowIcon />}
-                              onClick={() => handleClick(l.comps, l.id)}
-                            >
-                              Run{" "}
-                            </RunButton>
-                          </div>
+    </div>
+  </div>
+);
 
-                          {l.comps &&
-                            l.comps.map((x, i) => {
-                              let str = `${x}`;
-                              let component_id = `comp${str}-${l.id}-${i}`;
+function MidArea({ area_list, add_list, event_values }) {
+  const executeCode = (components, listId) => {
+    if (components.length === 0) return;
+    
+    let currentIndex = 0;
+    let repeatCount = 1;
 
-                              return (
-                                <Draggable
-                                  key={`${str}-${l.id}-${i}`}
-                                  draggableId={`${str}-${l.id}-${i}`}
-                                  index={i}
-                                >
-                                  {(provided) => (
-                                    <li
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                    >
-                                      {getComponent(str, component_id)}
-                                      {provided.placeholder}
-                                    </li>
-                                  )}
-                                </Draggable>
-                              );
-                            })}
-                          {provided.placeholder}
-                        </ul>
-                      );
-                    }}
-                  </Droppable>
-                </div>
-              </Paper>
-            </div>
-          );
-        })}
+    const executeComponent = (index) => {
+      const componentId = `comp${components[index]}-${listId}-${index}`;
+      
+      if (components[index] === "WAIT") {
+        const waitTime = event_values.wait[componentId];
+        return new Promise(resolve => setTimeout(resolve, waitTime * 1000));
+      }
+      
+      if (components[index] === "REPEAT") {
+        repeatCount *= (event_values.repeat[componentId] + 1);
+        return Promise.resolve();
+      }
+      
+      const element = document.getElementById(componentId);
+      if (element) {
+        element.click();
+      }
+      return Promise.resolve();
+    };
+
+    const runSequence = async () => {
+      while (currentIndex < components.length) {
+        await executeComponent(currentIndex);
+        currentIndex++;
+        
+        if (components[currentIndex - 1] === "REPEAT" && repeatCount > 2) {
+          repeatCount--;
+          currentIndex--;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    };
+
+    runSequence();
+  };
+
+  return (
+    <div className="flex-1 h-full overflow-auto p-3 bg-gradient-to-br from-[#1e0033] to-black">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold text-white bg-green-500 px-4 py-2 rounded-lg transform transition-all duration-300 hover:scale-105">
+          Code Blocks
+        </h2>
+
+        <button
+          onClick={add_list}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 transform transition-all duration-300 hover:scale-105 active:scale-95"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Add Block
+        </button>
+      </div>
+
+      <div className="grid grid-flow-col gap-4">
+        {area_list.midAreaLists.map((list) => (
+          <CodeArea
+            key={list.id}
+            list={list}
+            onRun={executeCode}
+          />
+        ))}
       </div>
     </div>
   );
 }
 
-// mapping state to props
-const mapStateToProps = (state) => {
-  return {
-    area_list: state.list,
-    event_values: state.event,
-  };
-};
+const mapStateToProps = (state) => ({
+  area_list: state.list,
+  event_values: state.event,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    add_list: () => dispatch(addList()),
-  };
+const mapDispatchToProps = {
+  add_list: addList,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MidArea);

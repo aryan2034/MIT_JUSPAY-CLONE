@@ -16,20 +16,22 @@ const MoveY = ({ character, comp_id }) => {
   };
 
   return (
-    <Paper elevation={3}>
+    <Paper elevation={3} className="bg-gray-800">
       <div
         id={comp_id}
-        className={`text-center rounded bg-blue-700 text-white p-2 my-2 text-sm cursor-pointer mx-auto`}
+        className="text-center rounded-lg bg-blue-600 text-white p-3 my-2 text-sm cursor-pointer mx-auto shadow-lg hover:bg-blue-700 transition-all duration-200"
         onClick={() => handleClick()}
       >
-        Move Y{" "}
-        <input
-          type="number"
-          className="text-black text-center w-16 mx-2"
-          value={steps}
-          onChange={(e) => setSteps(parseInt(e.target.value))}
-        />{" "}
-        steps
+        <div className="flex items-center justify-center gap-2">
+          <span>Move Y</span>
+          <input
+            type="number"
+            className="text-white bg-gray-700 text-center w-16 px-2 py-1 rounded-md border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            value={steps}
+            onChange={(e) => setSteps(parseInt(e.target.value))}
+          />
+          <span>steps</span>
+        </div>
       </div>
     </Paper>
   );

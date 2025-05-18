@@ -16,12 +16,12 @@ const GotoXY = ({ character, comp_id }) => {
     el.style.top = state.goto_y + "px";
   };
   return (
-    <Paper elevation={3}>
-      <div className="text-center rounded bg-blue-500 p-2 my-3">
-        <div className="grid grid-cols-2 my-2">
-          <div className="text-white"> X</div>
+    <Paper elevation={3} className="bg-gray-800">
+      <div className="text-center rounded-lg bg-blue-600 p-3 my-3 shadow-lg">
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="text-white font-medium">X:</div>
           <input
-            className="mx-2 p-1 py-0 text-center"
+            className="text-white bg-gray-700 px-3 py-1 rounded-md border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             type="number"
             value={state.goto_x}
             onChange={(e) => {
@@ -30,10 +30,10 @@ const GotoXY = ({ character, comp_id }) => {
             }}
           />
         </div>
-        <div className="grid grid-cols-2 my-2">
-          <div className="text-white">Y</div>
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="text-white font-medium">Y:</div>
           <input
-            className="mx-2 p-1 py-0 text-center"
+            className="text-white bg-gray-700 px-3 py-1 rounded-md border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             type="number"
             value={state.goto_y}
             onChange={(e) => {
@@ -44,10 +44,10 @@ const GotoXY = ({ character, comp_id }) => {
         </div>
         <div
           id={comp_id}
-          className="text-center bg-blue-700 text-white px-2 py-1 my-2 text-sm cursor-pointer"
+          className="text-center bg-blue-700 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-blue-800 transition-all duration-200 shadow-md"
           onClick={() => gotoXY()}
         >
-          Go to X : {state.goto_x} Y : {state.goto_y}
+          Go to X: {state.goto_x} Y: {state.goto_y}
         </div>
       </div>
     </Paper>

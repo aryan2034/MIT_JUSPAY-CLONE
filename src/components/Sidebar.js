@@ -10,16 +10,16 @@ import {
 
 export default function Sidebar() {
   return (
-    <div className="w-60 flex-none h-full overflow-y-auto flex flex-col items-start p-2 border-r border-gray-200">
-      <div className="font-bold mb-5 text-center border border-2 rounded text-white bg-green-400 p-2 w-auto">
+    <div className="w-60 flex-none h-full overflow-y-auto flex flex-col items-start p-4 border-r border-gray-700 bg-gray-900 bg-opacity-50">
+      <div className="font-bold mb-6 text-center border border-purple-500 rounded-lg text-white bg-purple-600 p-3 w-full shadow-lg">
         Side Bar
       </div>
       {/* Motion */}
-      <div className="font-bold"> {"Motion"} </div>
+      <div className="font-bold text-purple-400 mb-2 text-lg">Motion</div>
       <Droppable droppableId="sideArea-motion" type="COMPONENTS">
         {(provided) => (
           <ul
-            className="sideArea-motion my-3"
+            className="sideArea-motion my-3 w-full"
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
@@ -35,7 +35,7 @@ export default function Sidebar() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="my-2"
+                      className="my-2 transform transition-all duration-200 hover:scale-105"
                     >
                       {getComponent(x)}
                     </li>
@@ -49,7 +49,7 @@ export default function Sidebar() {
       </Droppable>
 
       {/* Looks */}
-      <div className="font-bold"> {"Looks"} </div>
+      <div className="font-bold text-purple-400 mb-2 text-lg">Looks</div>
       <Droppable droppableId="sideArea-looks" type="COMPONENTS">
         {(provided) => (
           <ul

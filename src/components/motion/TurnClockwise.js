@@ -20,12 +20,12 @@ const TurnClockWise = ({ character, characterAngle, comp_id }) => {
   };
 
   return (
-    <Paper elevation={3}>
-      <div className="text-center rounded bg-blue-500 p-2 my-3">
-        <div className="grid grid-cols-2">
-          <div className="text-white">Rotate By:</div>
+    <Paper elevation={3} className="bg-gray-800">
+      <div className="text-center rounded-lg bg-blue-600 p-3 my-3 shadow-lg">
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="text-white font-medium">Rotate By:</div>
           <input
-            className="mx-2 p-1 py-0 text-center"
+            className="text-white bg-gray-700 px-3 py-1 rounded-md border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             type="number"
             value={angle}
             onChange={(e) => setAngle(parseInt(e.target.value))}
@@ -33,12 +33,13 @@ const TurnClockWise = ({ character, characterAngle, comp_id }) => {
         </div>
         <div
           id={comp_id}
-          className={`flex bg-blue-700 text-white px-2 py-1 mt-3 mb-1 text-sm cursor-pointer text-center`}
+          className="flex bg-blue-700 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-blue-800 transition-all duration-200 shadow-md"
           onClick={() => handleClick()}
         >
-          <div className="flex mx-auto">
-            Turn
-            <RedoIcon className="mx-2" /> {angle} degrees
+          <div className="flex items-center justify-center gap-2 mx-auto">
+            <span>Turn</span>
+            <RedoIcon className="text-lg" />
+            <span>{angle} degrees</span>
           </div>
         </div>
       </div>
